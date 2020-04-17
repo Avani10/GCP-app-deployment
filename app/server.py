@@ -8,10 +8,13 @@ from io import BytesIO
 from fastai import *
 from fastai.vision import *
 
-export_file_url = 'https://www.googleapis.com/drive/v3/files/17TsTbxkd4rKxYj0GRjhs60nBNBiczSAd?alt=media&key=AIzaSyCFxxk2GDkiYF24ty3zTBVYjdVyR2zzJMI'
-export_file_name = 'export.pkl'
+export_file_url = 'https://www.googleapis.com/drive/v3/files/1kxYbe1dxjYk1ncejE3pTjum_EDSoVlN_?alt=media&key=AIzaSyCFxxk2GDkiYF24ty3zTBVYjdVyR2zzJMI'
+export_file_name = 'exportisc.pkl'
 
-classes = ['jigglypuff', 'pichu', 'pikachu', 'raichu']
+classes = ['Animal', 'Archway', 'Bicyclist', 'Bridge', 'Building', 'Car', 'CartLuggagePram', 'Child', 'Column_Pole',
+       'Fence', 'LaneMkgsDriv', 'LaneMkgsNonDriv', 'Misc_Text', 'MotorcycleScooter', 'OtherMoving', 'ParkingBlock',
+       'Pedestrian', 'Road', 'RoadShoulder', 'Sidewalk', 'SignSymbol', 'Sky', 'SUVPickupTruck', 'TrafficCone',
+       'TrafficLight', 'Train', 'Tree', 'Truck_Bus', 'Tunnel', 'VegetationMisc', 'Void', 'Wall']
 path = Path(__file__).parent
 
 app = Starlette()
@@ -53,8 +56,14 @@ async def analyze(request):
     data = await request.form()
     img_bytes = await (data['file'].read())
     img = open_image(BytesIO(img_bytes))
-    prediction = learn.predict(img)[0]
-    return JSONResponse({'result': str(prediction)})
+    prediction = learn.predict(img)
+    prediction[0].show(figsize=(7,7), alpha=1)
+    l=np.array(prediction[1]).flatten()
+    m=list(set(list(l)))
+    li=[]
+    for n in m:
+        li.append(classes[n])
+    return JSONResponse({'result': list(li)})
 
 if __name__ == '__main__':
     if 'serve' in sys.argv: uvicorn.run(app, host='0.0.0.0', port=8080)
