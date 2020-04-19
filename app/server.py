@@ -57,7 +57,7 @@ async def analyze(request):
     img_bytes = await (data['file'].read())
     img = open_image(BytesIO(img_bytes))
     prediction = learn.predict(img)
-    prediction[0].show(figsize=(7,7), alpha=1)
+    """prediction[0].show(figsize=(7,7), alpha=1)"""
     l=np.array(prediction[1]).flatten()
     m=list(set(list(l)))
     li=[]
