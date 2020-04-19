@@ -11,10 +11,21 @@ from fastai.vision import *
 export_file_url = 'https://www.googleapis.com/drive/v3/files/1kxYbe1dxjYk1ncejE3pTjum_EDSoVlN_?alt=media&key=AIzaSyCFxxk2GDkiYF24ty3zTBVYjdVyR2zzJMI'
 export_file_name = 'exportisc.pkl'
 
+
+
 classes = ['Animal', 'Archway', 'Bicyclist', 'Bridge', 'Building', 'Car', 'CartLuggagePram', 'Child', 'Column_Pole',
        'Fence', 'LaneMkgsDriv', 'LaneMkgsNonDriv', 'Misc_Text', 'MotorcycleScooter', 'OtherMoving', 'ParkingBlock',
        'Pedestrian', 'Road', 'RoadShoulder', 'Sidewalk', 'SignSymbol', 'Sky', 'SUVPickupTruck', 'TrafficCone',
        'TrafficLight', 'Train', 'Tree', 'Truck_Bus', 'Tunnel', 'VegetationMisc', 'Void', 'Wall']
+
+name2id = {v:k for k,v in enumerate(classes)}
+void_code = name2id['Void']
+
+def acc_camvid(input, target):
+    target = target.squeeze(1)
+    mask = target != void_code
+    return (input.argmax(dim=1)[mask]==target[mask]).float().mean()
+
 path = Path(__file__).parent
 
 app = Starlette()
